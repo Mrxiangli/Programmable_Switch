@@ -3,6 +3,9 @@ import os
 import sys
 
 from scapy.all import (
+    Packet,
+    IntField,
+    BitField,
     TCP,
     FieldLenField,
     FieldListField,
@@ -10,10 +13,21 @@ from scapy.all import (
     IPOption,
     ShortField,
     get_if_list,
-    sniff
+    sniff,
+    bind_layers
 )
 from scapy.layers.inet import _IPOption_HDR
+class Klass(Packet):
+    name = "Klass"
+    fields_desc=[BitField("hash",0,32),
+                BitField("X7",1,32),
+                BitField("X14",0,32)]
 
+def expand(x):
+    yield x
+    while x.payload:
+        x = x.payload
+        yield x
 
 def get_if():
     ifs=get_if_list()
@@ -41,15 +55,14 @@ class IPOption_MRI(IPOption):
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
     if TCP in pkt and pkt[TCP].dport == 1234:
-        print("got a packet")
         pkt.show2()
-    #    hexdump(pkt)
         sys.stdout.flush()
 
 
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
     iface = ifaces[0]
+    bind_layers(TCP, Klass, dport=1234)
     print("sniffing on %s" % iface)
     sys.stdout.flush()
     sniff(iface = iface,

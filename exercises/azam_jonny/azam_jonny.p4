@@ -8,6 +8,7 @@ const bit<8>  TYPE_TCP  = 6;
 #define MAX_TABLE_SIZE 512
 #define MAX_REGISTER_ARRAY_SIZE 512
 #define REGISTER_SIZE 16
+#define FEATURE_SIZE 30
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -58,10 +59,18 @@ header tcp_t{
     bit<16> urgentPtr;
 }
 
+
 header class_t {
     bit<32> hash;
-    bit<8> class_id;
-    bit<48> processing_time;
+    bit<32> X7 ;
+    bit<32> X14 ;
+    // bit<32> X10 ;
+    // bit<32> X12 ;
+    // bit<32> X14 ;
+    // bit<32> X16 ;
+    // bit<32> X17 ;
+    // bit<32> X21 ;
+    // bit<32> X25 ;
 }
 
 struct metadata {
@@ -160,12 +169,19 @@ control MyIngress(inout headers hdr,
     register<bit<REGISTER_SIZE>>(MAX_REGISTER_ARRAY_SIZE) mf_counts;
     register<bit<REGISTER_SIZE>>(MAX_REGISTER_ARRAY_SIZE) flow_durations;
 
-    action hash_packet(ip4Addr_t ipAddr1, ip4Addr_t ipAddr2, bit<16> port1, bit<16> port2) {
+   
+/*   action hash_packet(ip4Addr_t ipAddr1, ip4Addr_t ipAddr2, bit<16> port1, bit<16> port2) {
         hash(hash_value, HashAlgorithm.crc32, (bit<32>)0, {ipAddr1,
                                                            ipAddr2,
                                                            port1,
                                                            port2,
                                                            hdr.ipv4.protocol},
+                                                           (bit<32>)MAX_TABLE_SIZE);
+    }
+  */
+
+    action hash_packet(ip4Addr_t ipAddr1, ip4Addr_t ipAddr2, bit<16> port1, bit<16> port2) {
+        hash(hash_value, HashAlgorithm.crc32, (bit<32>)0, {ipAddr1},
                                                            (bit<32>)MAX_TABLE_SIZE);
     }
 
@@ -198,6 +214,8 @@ control MyIngress(inout headers hdr,
             // Hash 4 tuple for register-array index
             hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
 
+
+/*
             // Read flow's current state stored in switch registers
             syn_counts.read(syn_count, hash_value);
             fin_counts.read(fin_count, hash_value);
@@ -301,9 +319,16 @@ control MyIngress(inout headers hdr,
                     class = 0;
                 }
             }
+*/
 
+	bit<32>	x14 = hdr.class.X14;
+	bit<32>	x7 = hdr.class.X7;
+	
             // Write classification result to header
-            hdr.class.class_id = class;
+           // hdr.class.X7 = 0 - x14;
+	    hdr.class.X14 = x14;
+	    hdr.class.X7 = x7-x14;
+	    	
             hdr.class.hash = hash_value;
         }
         if (hdr.ipv4.isValid()) {
@@ -319,9 +344,7 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply {
-        hdr.class.processing_time = standard_metadata.egress_global_timestamp - standard_metadata.ingress_global_timestamp;
-    }
+	apply {}
 }
 
 /*************************************************************************
