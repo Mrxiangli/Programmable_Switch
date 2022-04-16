@@ -70,6 +70,7 @@ header class_t {
     bit<32> X17;
     bit<32> X27;
     bit<64> start;
+    bit<8> truth;
 }
 
 struct metadata {
@@ -369,7 +370,7 @@ control MyIngress(inout headers hdr,
         } 
     } 
 
-	hdr.class.result = 1;
+	hdr.class.result = result;
 	    	
     hdr.class.hash = hash_value;
         }

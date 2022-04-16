@@ -16,7 +16,8 @@ class Klass(Packet):
         BitField("X14", 0, 32),
         BitField("X17", 0, 32),
         BitField("X27", 0, 32),
-        BitField("start", 0, 64)]
+        BitField("start", 0, 64),
+        BitField("truth",0, 8)]
 
 def get_if():
     ifs=get_if_list()
@@ -54,13 +55,10 @@ def main():
     with open("testing-data.csv","r") as test:
         csv_reader = csv.reader(test)
         for row in csv_reader:
-            print(type(row[10]))
-
             pkt =  Ether(src=get_if_hwaddr(iface), dst='00:00:00:00:00:00')
-            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]), start=round(time.time()*1000))
+            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]), start=round(time.time()*1000),truth=(row[-1]/1000))
 
             sendp(pkt, iface=iface, verbose=False)
-            break
 
 if __name__ == '__main__':
     main()

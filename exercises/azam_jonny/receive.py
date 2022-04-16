@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import os
 import sys
+import time
 
+count = 0
 from scapy.all import (
     Packet,
     IntField,
@@ -29,7 +31,8 @@ class Klass(Packet):
         BitField("X14", 0, 32),
         BitField("X17", 0, 32),
         BitField("X27", 0, 32),
-        BitField("start", 0, 64)]
+        BitField("start", 0, 64),
+        BitField("truth",0, 8)]
 
 def expand(x):
     yield x
@@ -62,12 +65,15 @@ class IPOption_MRI(IPOption):
                                    IntField("", 0),
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
+    global count
     if TCP in pkt and pkt[TCP].dport == 1234:
     #if TCP in pkt:
-        pkt.show2()
+        #pkt.show2()
         sys.stdout.flush()
         print(round(time.time()*1000) - pkt.start)
-        #sendp(pkt)
+        if pkt.result == pkt.truth:
+            count += 1
+            print(f"Az is a real big phony:{count}")
 
 
 def main():
