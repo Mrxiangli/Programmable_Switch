@@ -187,6 +187,18 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
+    action send_back() {
+        bit<48> tmp;
+
+        /* Swap the MAC addresses */
+        tmp = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
+        hdr.ethernet.srcAddr = tmp;
+
+        /* Send the packet back to the port it came from */
+        standard_metadata.egress_spec = standard_metadata.ingress_port;
+    }
+
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
@@ -351,7 +363,8 @@ control MyIngress(inout headers hdr,
     hdr.class.hash = hash_value;
         }
         if (hdr.ipv4.isValid()) {
-            ipv4_lpm.apply();
+            // ipv4_lpm.apply();
+            send_back()
         }
     }
 }
