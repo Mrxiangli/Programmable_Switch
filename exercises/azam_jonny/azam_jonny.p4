@@ -201,7 +201,7 @@ control MyIngress(inout headers hdr,
 
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
         ip4Addr_t srcAddr = hdr.ipv4.srcAddr;
-        bit<16> srcPort = hdr.tcp.srcPort
+        bit<16> srcPort = hdr.tcp.srcPort;
 
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
