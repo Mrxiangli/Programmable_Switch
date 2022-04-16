@@ -60,9 +60,9 @@ class IPOption_MRI(IPOption):
                                    IntField("", 0),
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
-    if TCP in pkt and pkt[TCP].dport == 1234:
-        pkt.show2()
-        sys.stdout.flush()
+    # if TCP in pkt and pkt[TCP].dport == 1234:
+    pkt.show2()
+    sys.stdout.flush()
 
 
 def main():
