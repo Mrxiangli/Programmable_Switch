@@ -205,8 +205,8 @@ control MyIngress(inout headers hdr,
 
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
-        // standard_metadata.egress_spec = port;
-        standard_metadata.egress_spec = standard_metadata.ingress_port;
+        standard_metadata.egress_spec = port;
+        // standard_metadata.egress_spec = standard_metadata.ingress_port;
 
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
         hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
