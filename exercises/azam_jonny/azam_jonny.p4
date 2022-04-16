@@ -4,6 +4,7 @@
 
 const bit<16> TYPE_IPV4 = 0x800;
 const bit<8>  TYPE_TCP  = 6;
+const bit<32>  NEGATIVE_MASK  = 0x80000000;
 
 #define MAX_TABLE_SIZE 512
 #define MAX_REGISTER_ARRAY_SIZE 512
@@ -62,15 +63,11 @@ header tcp_t{
 
 header class_t {
     bit<32> hash;
-    bit<32> X7 ;
-    bit<32> X14 ;
-    // bit<32> X10 ;
-    // bit<32> X12 ;
-    // bit<32> X14 ;
-    // bit<32> X16 ;
-    // bit<32> X17 ;
-    // bit<32> X21 ;
-    // bit<32> X25 ;
+    bit<1>  result;
+    bit<32> X10;
+    bit<32> X12;
+    bit<32> X14;
+    bit<32> X17;
 }
 
 struct metadata {
@@ -214,120 +211,140 @@ control MyIngress(inout headers hdr,
             // Hash 4 tuple for register-array index
             hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
 
+	bit<32> x10 = hdr.class.X10;
+    bit<32> x12 = hdr.class.X12;
+    bit<32> x14 = hdr.class.X14;
+    bit<32> x17 = hdr.class.X17;
+    bit<1> result;
+    bit<32> tmp;
 
-/*
-            // Read flow's current state stored in switch registers
-            syn_counts.read(syn_count, hash_value);
-            fin_counts.read(fin_count, hash_value);
-            rst_counts.read(rst_count, hash_value);
-            psh_counts.read(psh_count, hash_value);
-            ack_counts.read(ack_count, hash_value);
-            urg_counts.read(urg_count, hash_value);
-            num_packets.read(num_packet, hash_value);
-            max_pkt_sizes.read(max_pkt_size, hash_value);
-            min_pkt_sizes.read(min_pkt_size, hash_value);
-            total_flow_sizes.read(total_flow_size, hash_value);
-            df_counts.read(df_count, hash_value);
-            mf_counts.read(mf_count, hash_value);
-            flow_durations.read(flow_duration, hash_value);
+    if((x17 & NEGATIVE_MASK) > 0){ // x17 is neagtive
+        tmp = ~(x17 - 1)
+        if (tmp > 5){       //True 
 
-            // Update flow state
-            if (hdr.tcp.syn == 1){
-                syn_count = syn_count + 1;
-                syn_counts.write(hash_value, syn_count);
-            }
-            if (hdr.tcp.fin == 1){
-                fin_count = fin_count + 1;
-                fin_counts.write(hash_value, fin_count);
-            }
-            if (hdr.tcp.rst == 1){
-                rst_count = rst_count + 1;
-                rst_counts.write(hash_value, rst_count);
-            }
-            if (hdr.tcp.psh == 1){
-                psh_count = psh_count + 1;
-                psh_counts.write(hash_value, psh_count);
-            }
-            if (hdr.tcp.ack == 1){
-                ack_count = ack_count + 1;
-                ack_counts.write(hash_value, ack_count);
-            }
-            if (hdr.tcp.urg == 1){
-                urg_count = urg_count + 1;
-                urg_counts.write(hash_value, urg_count);
-            }
+            if((x10 & NEGATIVE_MASK) > 0){ // x10 is neagtive
+                tmp = ~(x10 - 1)
+                if (tmp > 3){       //True 
 
-            num_packet = num_packet + 1;
-            num_packets.write(hash_value, num_packet);
-            
-            total_flow_size = total_flow_size + standard_metadata.packet_length;
-            total_flow_sizes.write(hash_value, total_flow_size);
-
-            if (standard_metadata.packet_length > max_pkt_size) {
-                max_pkt_sizes.write(hash_value, standard_metadata.packet_length);
-            }
-            if (standard_metadata.packet_length < min_pkt_size) {
-                min_pkt_sizes.write(hash_value, standard_metadata.packet_length);
-            }
-
-            if (hdr.ipv4.flags == 2) {
-                df_count = df_count + 1;
-                df_counts.write(hash_value, df_count);
-            }
-            if (hdr.ipv4.flags == 4) {
-                mf_count = mf_count + 1;
-                mf_counts.write(hash_value, mf_count);
-            }
-            if (hdr.ipv4.flags == 6) {
-                mf_count = mf_count + 1;
-                df_count = df_count + 1;
-                mf_counts.write(hash_value, mf_count);
-                df_counts.write(hash_value, df_count);
-            }
-
-            // Decision tree
-            if (max_pkt_size <= 4343) {
-                if (max_pkt_size == 0) {
-                    if (hdr.tcp.dstPort < 108) {
-                        if (flow_duration <= 9384) {
-                            class = 2;
-                        } else if (num_packet == 1) {
-                            class = 3;
-                        } else {
-                            class = 0;
+                    if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+                        tmp = ~(x14 - 1)
+                        if (tmp > 5){       //True
+                            result = 1;
+                        }else{              //False
+                            result = 0;
+                        } 
+                    }else{              //x14 positive
+                            result = 0;
+                    } 
+                }else{              //negative false x10
+                    if((x12 & NEGATIVE_MASK) > 0){  //
+                        tmp = ~(x12 - 1)
+                        if (tmp > 7){
+                            result = 1;
+                        }else{
+                            result = 0;
                         }
-                    } else {
-                        class = 0;
+                    }else{          // x12 positive
+                        result = 0;
                     }
-                } else {
-                    if (fin_count == 0) {
-                        class = 0;
-                    } else if (hdr.tcp.dstPort <= 235) {
-                        class = 2;
-                    } else {
-                        class = 0;
-                    }
-                }
-            } else {
-                if (hdr.tcp.dstPort < 262) {
-                    if (total_flow_size < 11614) {
-                        class = 2;
-                    } else {
-                        class = 1;
-                    }
-                } else {
-                    class = 0;
-                }
+                } 
             }
-*/
+            else{   //x10 is positive
+                if((x12 & NEGATIVE_MASK) > 0){  //
+                    tmp = ~(x12 - 1)
+                    if (tmp > 7){
+                        result = 1;
+                    }else{
+                        result = 0;
+                    }
+                }else{          // x12 positive
+                    result = 0;
+                }
+            }   
+        }else{              //False x17
+            if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+                tmp = ~(x14 - 1)
+                if (tmp > 15){       //True
 
-	bit<32>	x14 = hdr.class.X14;
-	bit<32>	x7 = hdr.class.X7;
-	
-            // Write classification result to header
-           // hdr.class.X7 = 0 - x14;
-	    hdr.class.X14 = x14;
-	    hdr.class.X7 = x7-x14;
+                    if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
+                        tmp = ~(x12 - 1)
+                        if (tmp > 5){       //True
+                            result = 1;
+                        }else{              //False
+                            result = 0;
+                        } 
+                    }else{              //x12 positive
+                        result = 0;
+                    }  
+                }else{              //False
+                    if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+                        tmp = ~(x14 - 1)
+                        if (tmp > 7){       //True
+                            result = 0;
+                        }else{              //False
+                            result = 0;
+                        } 
+                    }else{              //x14 positive
+                        result = 0;
+                    } 
+                    
+                } 
+            }else{              //x14 positive
+                if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+                    tmp = ~(x14 - 1)
+                    if (tmp > 7){       //True
+                        result = 0;
+                    }else{              //False
+                        result = 0;
+                    } 
+                }else{              //x14 positive
+                    result = 0;
+                }  
+            } 
+        } 
+    }else{  //x17 positive
+        if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+            tmp = ~(x14 - 1)
+            if (tmp > 15){       //True
+
+                if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
+                    tmp = ~(x12 - 1)
+                    if (tmp > 5){       //True
+                        result = 1;
+                    }else{              //False
+                        result = 0;
+                    } 
+                }else{              //x12 positive
+                    result = 0;
+                }  
+            }else{              //False
+                if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+                    tmp = ~(x14 - 1)
+                    if (tmp > 7){       //True
+                        result = 0;
+                    }else{              //False
+                        result = 0;
+                    } 
+                }else{              //x14 positive
+                    result = 0;
+                } 
+                
+            } 
+        }else{              //x14 positive
+            if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+                tmp = ~(x14 - 1)
+                if (tmp > 7){       //True
+                    result = 0;
+                }else{              //False
+                    result = 0;
+                } 
+            }else{              //x14 positive
+                result = 0;
+            }  
+        } 
+    } 
+
+	hdr.class.result = result;
 	    	
             hdr.class.hash = hash_value;
         }

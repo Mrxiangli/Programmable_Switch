@@ -17,11 +17,16 @@ from scapy.all import (
     bind_layers
 )
 from scapy.layers.inet import _IPOption_HDR
+
 class Klass(Packet):
     name = "Klass"
-    fields_desc=[BitField("hash",0,32),
-                BitField("X7",1,32),
-                BitField("X14",0,32)]
+    fields_desc=[
+        BitField("hash", 0, 32),
+        BitField("result", 0, 1),
+        BitField("X10", 0, 32),
+        BitField("X12", 0, 32),
+        BitField("X14", 0, 32),
+        BitField("X17", 0, 32)]
 
 def expand(x):
     yield x
