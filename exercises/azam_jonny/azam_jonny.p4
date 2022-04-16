@@ -219,15 +219,15 @@ control MyIngress(inout headers hdr,
     bit<32> tmp;
 
     if((x17 & NEGATIVE_MASK) > 0){ // x17 is neagtive
-        tmp = ~(x17 - 1)
+        tmp = ~(x17 - 1);
         if (tmp > 5){       //True 
 
             if((x10 & NEGATIVE_MASK) > 0){ // x10 is neagtive
-                tmp = ~(x10 - 1)
+                tmp = ~(x10 - 1);
                 if (tmp > 3){       //True 
 
                     if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                        tmp = ~(x14 - 1)
+                        tmp = ~(x14 - 1);
                         if (tmp > 5){       //True
                             result = 1;
                         }else{              //False
@@ -238,7 +238,7 @@ control MyIngress(inout headers hdr,
                     } 
                 }else{              //negative false x10
                     if((x12 & NEGATIVE_MASK) > 0){  //
-                        tmp = ~(x12 - 1)
+                        tmp = ~(x12 - 1);
                         if (tmp > 7){
                             result = 1;
                         }else{
@@ -251,7 +251,7 @@ control MyIngress(inout headers hdr,
             }
             else{   //x10 is positive
                 if((x12 & NEGATIVE_MASK) > 0){  //
-                    tmp = ~(x12 - 1)
+                    tmp = ~(x12 - 1);
                     if (tmp > 7){
                         result = 1;
                     }else{
@@ -263,11 +263,11 @@ control MyIngress(inout headers hdr,
             }   
         }else{              //False x17
             if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                tmp = ~(x14 - 1)
+                tmp = ~(x14 - 1);
                 if (tmp > 15){       //True
 
                     if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
-                        tmp = ~(x12 - 1)
+                        tmp = ~(x12 - 1);
                         if (tmp > 5){       //True
                             result = 1;
                         }else{              //False
@@ -278,7 +278,7 @@ control MyIngress(inout headers hdr,
                     }  
                 }else{              //False
                     if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                        tmp = ~(x14 - 1)
+                        tmp = ~(x14 - 1);
                         if (tmp > 7){       //True
                             result = 0;
                         }else{              //False
@@ -291,7 +291,7 @@ control MyIngress(inout headers hdr,
                 } 
             }else{              //x14 positive
                 if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                    tmp = ~(x14 - 1)
+                    tmp = ~(x14 - 1);
                     if (tmp > 7){       //True
                         result = 0;
                     }else{              //False
@@ -304,7 +304,7 @@ control MyIngress(inout headers hdr,
         } 
     }else{  //x17 positive
         if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-            tmp = ~(x14 - 1)
+            tmp = ~(x14 - 1);
             if (tmp > 15){       //True
 
                 if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
@@ -319,7 +319,7 @@ control MyIngress(inout headers hdr,
                 }  
             }else{              //False
                 if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                    tmp = ~(x14 - 1)
+                    tmp = ~(x14 - 1);
                     if (tmp > 7){       //True
                         result = 0;
                     }else{              //False
@@ -332,7 +332,7 @@ control MyIngress(inout headers hdr,
             } 
         }else{              //x14 positive
             if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                tmp = ~(x14 - 1)
+                tmp = ~(x14 - 1);
                 if (tmp > 7){       //True
                     result = 0;
                 }else{              //False
@@ -346,7 +346,7 @@ control MyIngress(inout headers hdr,
 
 	hdr.class.result = result;
 	    	
-            hdr.class.hash = hash_value;
+    hdr.class.hash = hash_value;
         }
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
