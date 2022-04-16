@@ -358,7 +358,7 @@ control MyIngress(inout headers hdr,
         } 
     } 
 
-	hdr.class.result = result;
+	hdr.class.result = 1;
 	    	
     hdr.class.hash = hash_value;
         }

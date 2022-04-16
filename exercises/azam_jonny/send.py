@@ -3,7 +3,7 @@ import random
 import socket
 import sys
 import pdb
-from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_list,Packet, srp1
+from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_list,Packet, srp1, bind_layers
 import csv
 class Klass(Packet):
     name = "Klass"
@@ -28,6 +28,11 @@ def get_if():
         exit(1)
     return iface
 
+def handle_pkt(pkt):
+    if TCP in pkt and pkt[TCP].dport == 1234:
+        pkt.show2()
+        sys.stdout.flush()
+
 def main():
 
     if len(sys.argv)<2:
@@ -38,6 +43,8 @@ def main():
     iface = get_if()
     
 
+    bind_layers(TCP, Klass, dport=1234)
+
     print("sending on interface %s to %s" % (iface, str(addr)))
     pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
     with open("testing-data.csv","r") as test:
@@ -47,6 +54,7 @@ def main():
             pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]))
             resp = srp1(pkt, iface=iface, verbose=False)
             print(f"Got the response back {resp}")
+            handle_pkt(resp)
             break
     print(pkt)
     pkt.show2()
