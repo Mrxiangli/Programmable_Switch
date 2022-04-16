@@ -199,19 +199,19 @@ control MyIngress(inout headers hdr,
         standard_metadata.egress_spec = standard_metadata.ingress_port;
     }
 
-    // action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-    //     hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-    //     hdr.ethernet.dstAddr = dstAddr;
-    //     standard_metadata.egress_spec = port;
-    //     hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-    // }
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        standard_metadata.egress_spec = port;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    }
 
     table ipv4_lpm {
         key = {
             hdr.ipv4.dstAddr: lpm;
         }
         actions = {
-            send_back;
+            ipv4_forward;
             drop;
             NoAction;
         }

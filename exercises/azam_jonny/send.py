@@ -56,11 +56,6 @@ def main():
             print(f"Got the response back {resp}")
             handle_pkt(resp)
             break
-    print(pkt)
-    pkt.show2()
-	 
-    
-
 
 if __name__ == '__main__':
     main()
