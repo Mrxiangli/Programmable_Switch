@@ -4,8 +4,7 @@ import socket
 import sys
 import pdb
 from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_list, sendp,Packet
-import pandas as pd
-
+import csv
 class Klass(Packet):
     name = "Klass"
     fields_desc=[
@@ -33,7 +32,9 @@ def main():
     if len(sys.argv)<2:
         print('pass 2 arguments: <destination>')
         exit(1)
-    df = pd.read_csv("testing-data.csv")
+
+
+
     inputdata = df.iloc[:,[10,12,14,17]]
     addr = socket.gethostbyname(sys.argv[1])
     iface = get_if()
@@ -41,11 +42,12 @@ def main():
 
     print("sending on interface %s to %s" % (iface, str(addr)))
     pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
-    for index,row in inputdata,iterrows():
-        pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=row['V10'],X12=row['V12'],X14=row['V14'],X17=row['V17'])
-        sendp(pkt, iface=iface, verbose=False)
-#    pdb.set_trace()
-        break
+    with open("testing-data.csv","r") as test:
+        csv_reader = csv.reader(test)
+        for row in csv_reader:
+            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=row[10],X12=row[12],X14=row[14],X17=row[17])
+            sendp(pkt, iface=iface, verbose=False)
+            break
     print(pkt)
     pkt.show2()
 	 
