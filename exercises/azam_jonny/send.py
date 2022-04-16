@@ -33,9 +33,6 @@ def main():
         print('pass 2 arguments: <destination>')
         exit(1)
 
-
-
-    inputdata = df.iloc[:,[10,12,14,17]]
     addr = socket.gethostbyname(sys.argv[1])
     iface = get_if()
     
