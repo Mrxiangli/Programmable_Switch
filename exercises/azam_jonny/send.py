@@ -46,13 +46,13 @@ def main():
     bind_layers(TCP, Klass, dport=1234)
 
     print("sending on interface %s to %s" % (iface, str(addr)))
-    pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
+    pkt =  Ether(src=get_if_hwaddr(iface), dst='00:00:00:00:00:00')
     with open("testing-data.csv","r") as test:
         csv_reader = csv.reader(test)
         for row in csv_reader:
             print(type(row[10]))
             pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]))
-            resp = srp1(pkt, iface=iface, verbose=False)
+            resp = srp1(pkt, iface=iface, verbose=True)
             print(f"Got the response back {resp}")
             handle_pkt(resp)
             break
