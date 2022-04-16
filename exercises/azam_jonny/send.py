@@ -43,7 +43,7 @@ def main():
     with open("testing-data.csv","r") as test:
         csv_reader = csv.reader(test)
         for row in csv_reader:
-            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=row[10],X12=row[12],X14=row[14],X17=row[17])
+            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=row[10],X11=row[11],X14=row[14],X17=row[17],X27=row[27])
             sendp(pkt, iface=iface, verbose=False)
             break
     print(pkt)
