@@ -77,8 +77,8 @@ struct metadata {
 
 struct headers {
     ethernet_t   ethernet;
-    // ipv4_t       ipv4;
-    // tcp_t        tcp;
+    ipv4_t       ipv4;
+    tcp_t        tcp;
     class_t      class;
 }
 
@@ -200,16 +200,16 @@ control MyIngress(inout headers hdr,
     }
 
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-        // ip4Addr_t srcAddr = hdr.ipv4.srcAddr;
+        ip4Addr_t srcAddr = hdr.ipv4.srcAddr;
 
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
         // standard_metadata.egress_spec = port;
         standard_metadata.egress_spec = standard_metadata.ingress_port;
 
-        // hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-        // hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
-        // hdr.ipv4.dstAddr = srcAddr;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+        hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
+        hdr.ipv4.dstAddr = srcAddr;
     }
 
     table ipv4_lpm {
@@ -226,9 +226,9 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-        // if (hdr.tcp.isValid()) {
+        if (hdr.tcp.isValid()) {
             // Hash 4 tuple for register-array index
-            // hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
+            hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
 
 	bit<32> x10 = hdr.class.X10;
     bit<32> x11 = hdr.class.X11;
@@ -367,10 +367,10 @@ control MyIngress(inout headers hdr,
 	hdr.class.result = 1;
 	    	
     hdr.class.hash = hash_value;
-        // }
-        // if (hdr.ipv4.isValid()) {
+        }
+        if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
-        // }
+        }
     }
 }
 
