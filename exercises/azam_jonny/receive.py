@@ -66,7 +66,7 @@ def handle_pkt(pkt):
     #if TCP in pkt:
         pkt.show2()
         sys.stdout.flush()
-        print(pkt.time - pkt["start"])
+        print(round(time.time()*1000) - pkt.start)
         #sendp(pkt)
 
 
