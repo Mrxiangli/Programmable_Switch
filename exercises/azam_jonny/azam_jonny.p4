@@ -187,7 +187,7 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action send_back() {
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
         bit<48> tmp;
 
         /* Swap the MAC addresses */
@@ -199,22 +199,22 @@ control MyIngress(inout headers hdr,
         standard_metadata.egress_spec = standard_metadata.ingress_port;
     }
 
-    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-        ip4Addr_t srcAddr = hdr.ipv4.srcAddr;
-        bit<16> srcPort = hdr.tcp.srcPort;
+    // action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+    //     ip4Addr_t srcAddr = hdr.ipv4.srcAddr;
+    //     bit<16> srcPort = hdr.tcp.srcPort;
 
-        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = dstAddr;
-        standard_metadata.egress_spec = port;
-        // standard_metadata.egress_spec = standard_metadata.ingress_port;
+    //     hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+    //     hdr.ethernet.dstAddr = dstAddr;
+    //     standard_metadata.egress_spec = port;
+    //     // standard_metadata.egress_spec = standard_metadata.ingress_port;
 
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-        hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
-        hdr.ipv4.dstAddr = srcAddr;
+    //     hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    //     hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
+    //     hdr.ipv4.dstAddr = srcAddr;
 
-        hdr.tcp.srcPort = hdr.tcp.dstPort;
-        hdr.tcp.dstPort = srcPort;
-    }
+    //     hdr.tcp.srcPort = hdr.tcp.dstPort;
+    //     hdr.tcp.dstPort = srcPort;
+    // }
 
     table ipv4_lpm {
         key = {
