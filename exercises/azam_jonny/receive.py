@@ -14,7 +14,8 @@ from scapy.all import (
     ShortField,
     get_if_list,
     sniff,
-    bind_layers
+    bind_layers,
+    sendp
 )
 from scapy.layers.inet import _IPOption_HDR
 
@@ -63,6 +64,7 @@ def handle_pkt(pkt):
     if TCP in pkt and pkt[TCP].dport == 1234:
         pkt.show2()
         sys.stdout.flush()
+        sendp(pkt)
 
 
 def main():
