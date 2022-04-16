@@ -57,7 +57,7 @@ def main():
             print(type(row[10]))
 
             pkt =  Ether(src=get_if_hwaddr(iface), dst='00:00:00:00:00:00')
-            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27], start=time.time()))
+            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]), start=time.time())
 
             sendp(l, iface=iface, verbose=False)
             break
