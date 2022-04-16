@@ -211,7 +211,7 @@ control MyIngress(inout headers hdr,
             hdr.ipv4.dstAddr: lpm;
         }
         actions = {
-            ipv4_forward;
+            send_back;
             drop;
             NoAction;
         }
@@ -363,8 +363,8 @@ control MyIngress(inout headers hdr,
     hdr.class.hash = hash_value;
         }
         if (hdr.ipv4.isValid()) {
-            // ipv4_lpm.apply();
-            send_back()
+            ipv4_lpm.apply();
+            // send_back();
         }
     }
 }
