@@ -22,7 +22,7 @@ class Klass(Packet):
     name = "Klass"
     fields_desc=[
         BitField("hash", 0, 32),
-        BitField("result", 0, 1),
+        BitField("result", 0, 8),
         BitField("X10", 0, 32),
         BitField("X12", 0, 32),
         BitField("X14", 0, 32),

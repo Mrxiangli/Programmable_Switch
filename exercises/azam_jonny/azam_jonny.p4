@@ -63,7 +63,7 @@ header tcp_t{
 
 header class_t {
     bit<32> hash;
-    bit<1>  result;
+    bit<8>  result;
     bit<32> X10;
     bit<32> X12;
     bit<32> X14;
@@ -215,7 +215,7 @@ control MyIngress(inout headers hdr,
     bit<32> x12 = hdr.class.X12;
     bit<32> x14 = hdr.class.X14;
     bit<32> x17 = hdr.class.X17;
-    bit<1> result;
+    bit<8> result;
     bit<32> tmp;
 
     if((x17 & NEGATIVE_MASK) > 0){ // x17 is neagtive
