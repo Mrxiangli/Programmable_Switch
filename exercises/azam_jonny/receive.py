@@ -24,9 +24,10 @@ class Klass(Packet):
         BitField("hash", 0, 32),
         BitField("result", 0, 8),
         BitField("X10", 0, 32),
-        BitField("X12", 0, 32),
+        BitField("X11", 0, 32),
         BitField("X14", 0, 32),
-        BitField("X17", 0, 32)]
+        BitField("X17", 0, 32),
+        BitField("X27", 0, 32)]
 
 def expand(x):
     yield x

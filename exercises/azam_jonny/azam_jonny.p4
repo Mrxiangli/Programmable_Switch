@@ -65,9 +65,10 @@ header class_t {
     bit<32> hash;
     bit<8>  result;
     bit<32> X10;
-    bit<32> X12;
+    bit<32> X11;
     bit<32> X14;
     bit<32> X17;
+    bit<32> X27;
 }
 
 struct metadata {
@@ -212,23 +213,24 @@ control MyIngress(inout headers hdr,
             hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
 
 	bit<32> x10 = hdr.class.X10;
-    bit<32> x12 = hdr.class.X12;
+    bit<32> x11 = hdr.class.X11;
     bit<32> x14 = hdr.class.X14;
     bit<32> x17 = hdr.class.X17;
+    bit<32> x27 = hdr.class.X27;
     bit<8> result;
     bit<32> tmp;
 
     if((x17 & NEGATIVE_MASK) > 0){ // x17 is neagtive
         tmp = ~(x17 - 1);
-        if (tmp > 5){       //True 
+        if (tmp > 2789){       //True 
 
             if((x10 & NEGATIVE_MASK) > 0){ // x10 is neagtive
                 tmp = ~(x10 - 1);
-                if (tmp > 3){       //True 
+                if (tmp > 1378){       //True 
 
                     if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
                         tmp = ~(x14 - 1);
-                        if (tmp > 5){       //True
+                        if (tmp > 3441){       //True
                             result = 1;
                         }else{              //False
                             result = 0;
@@ -237,49 +239,49 @@ control MyIngress(inout headers hdr,
                             result = 0;
                     } 
                 }else{              //negative false x10
-                    if((x12 & NEGATIVE_MASK) > 0){  //
-                        tmp = ~(x12 - 1);
-                        if (tmp > 7){
-                            result = 1;
-                        }else{
+                    if((x11 & NEGATIVE_MASK) > 0){  //
+                        tmp = ~(x11 - 1);
+                        if (tmp > 3325){
                             result = 0;
+                        }else{
+                            result = 1;
                         }
                     }else{          // x12 positive
-                        result = 0;
+                        result = 1;
                     }
                 } 
             }
             else{   //x10 is positive
-                if((x12 & NEGATIVE_MASK) > 0){  //
-                    tmp = ~(x12 - 1);
-                    if (tmp > 7){
-                        result = 1;
-                    }else{
+                if((x11 & NEGATIVE_MASK) > 0){  //
+                    tmp = ~(x11 - 1);
+                    if (tmp > 3325){
                         result = 0;
+                    }else{
+                        result = 1;
                     }
                 }else{          // x12 positive
-                    result = 0;
+                    result = 1;
                 }
             }   
         }else{              //False x17
             if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
                 tmp = ~(x14 - 1);
-                if (tmp > 15){       //True
+                if (tmp > 8225){       //True
 
-                    if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
-                        tmp = ~(x12 - 1);
-                        if (tmp > 5){       //True
-                            result = 1;
-                        }else{              //False
+                    if((x27 & NEGATIVE_MASK) > 0){ // x12 is neagtive
+                        tmp = ~(x27 - 1);
+                        if (tmp > 463){       //True
                             result = 0;
+                        }else{              //False
+                            result = 1;
                         } 
                     }else{              //x12 positive
-                        result = 0;
+                        result = 1;
                     }  
                 }else{              //False
                     if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
                         tmp = ~(x14 - 1);
-                        if (tmp > 7){       //True
+                        if (tmp > 4661){       //True
                             result = 0;
                         }else{              //False
                             result = 0;
@@ -292,7 +294,7 @@ control MyIngress(inout headers hdr,
             }else{              //x14 positive
                 if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
                     tmp = ~(x14 - 1);
-                    if (tmp > 7){       //True
+                    if (tmp > 4661){       //True
                         result = 0;
                     }else{              //False
                         result = 0;
@@ -305,22 +307,22 @@ control MyIngress(inout headers hdr,
     }else{  //x17 positive
         if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
             tmp = ~(x14 - 1);
-            if (tmp > 15){       //True
+            if (tmp > 8225){       //True
 
-                if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
-                    tmp = ~(x12 - 1);
-                    if (tmp > 5){       //True
-                        result = 1;
-                    }else{              //False
+                if((x27 & NEGATIVE_MASK) > 0){ // x12 is neagtive
+                    tmp = ~(x27 - 1);
+                    if (tmp > 463){       //True
                         result = 0;
+                    }else{              //False
+                        result = 1;
                     } 
                 }else{              //x12 positive
-                    result = 0;
+                    result = 1;
                 }  
             }else{              //False
                 if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
                     tmp = ~(x14 - 1);
-                    if (tmp > 7){       //True
+                    if (tmp > 4661){       //True
                         result = 0;
                     }else{              //False
                         result = 0;
@@ -333,7 +335,7 @@ control MyIngress(inout headers hdr,
         }else{              //x14 positive
             if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
                 tmp = ~(x14 - 1);
-                if (tmp > 7){       //True
+                if (tmp > 4661 ){       //True
                     result = 0;
                 }else{              //False
                     result = 0;
