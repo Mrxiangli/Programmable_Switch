@@ -212,8 +212,8 @@ control MyIngress(inout headers hdr,
         hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
         hdr.ipv4.dstAddr = srcAddr;
 
-        hdr.tcp.srcPort = hdr.tcp.dstPort;
-        hdr.tcp.dstPort = srcPort;
+        // hdr.tcp.srcPort = hdr.tcp.dstPort;
+        // hdr.tcp.dstPort = srcPort;
     }
 
     table ipv4_lpm {
