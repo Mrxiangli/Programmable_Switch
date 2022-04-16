@@ -308,7 +308,7 @@ control MyIngress(inout headers hdr,
             if (tmp > 15){       //True
 
                 if((x12 & NEGATIVE_MASK) > 0){ // x12 is neagtive
-                    tmp = ~(x12 - 1)
+                    tmp = ~(x12 - 1);
                     if (tmp > 5){       //True
                         result = 1;
                     }else{              //False
