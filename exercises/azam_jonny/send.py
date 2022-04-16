@@ -3,7 +3,7 @@ import random
 import socket
 import sys
 import pdb
-from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_list, sendp,Packet
+from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_list,Packet, srp1
 import csv
 class Klass(Packet):
     name = "Klass"
@@ -45,7 +45,8 @@ def main():
         for row in csv_reader:
             print(type(row[10]))
             pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]))
-            sendp(pkt, iface=iface, verbose=False)
+            resp = srp1(pkt, iface=iface, verbose=False)
+            print(resp)
             break
     print(pkt)
     pkt.show2()
