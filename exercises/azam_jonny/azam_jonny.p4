@@ -69,6 +69,7 @@ header class_t {
     bit<32> X14;
     bit<32> X17;
     bit<32> X27;
+    bit<64> start;
 }
 
 struct metadata {

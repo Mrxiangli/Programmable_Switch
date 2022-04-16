@@ -5,6 +5,7 @@ import sys
 import pdb
 from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_list,Packet, srp1, bind_layers, srp1flood
 import csv
+import time
 class Klass(Packet):
     name = "Klass"
     fields_desc=[
@@ -14,7 +15,8 @@ class Klass(Packet):
         BitField("X11", 0, 32),
         BitField("X14", 0, 32),
         BitField("X17", 0, 32),
-        BitField("X27", 0, 32)]
+        BitField("X27", 0, 32),
+        BitField("start", 0, 64)]
 
 def get_if():
     ifs=get_if_list()
@@ -46,10 +48,6 @@ def main():
     bind_layers(TCP, Klass, dport=1234)
 
     print("sending on interface %s to %s" % (iface, str(addr)))
-    pkt =  Ether(src=get_if_hwaddr(iface), dst='00:00:00:00:00:00')
-    pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]))
-
-    l = [pkt, pkt, pkt, pkt, pkt]
 
     p_pkt = lambda p: print(p)
 
@@ -57,9 +55,11 @@ def main():
         csv_reader = csv.reader(test)
         for row in csv_reader:
             print(type(row[10]))
-            resp = srp1flood(l, iface=iface, verbose=True ,prn=p_pkt)
-            print(f"Got the response back {resp}")
-            handle_pkt(resp)
+
+            pkt =  Ether(src=get_if_hwaddr(iface), dst='00:00:00:00:00:00')
+            pkt = pkt /IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27], start=time.time()))
+
+            sendp(l, iface=iface, verbose=False)
             break
 
 if __name__ == '__main__':
