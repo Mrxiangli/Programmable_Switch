@@ -83,7 +83,7 @@ def handle_pkt(pkt):
     global records
     if TCP in pkt and pkt[TCP].dport == 1234:
         sys.stdout.flush()
-        latency = round(time.time()*1000) - pkt.start
+        latency = time.time_ns() - pkt.start
         result_dict.append([latency, pkt.truth, pkt.result])    
     if len(result_dict) == records:
         with open("result.csv","w") as result:

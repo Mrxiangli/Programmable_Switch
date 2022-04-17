@@ -85,7 +85,7 @@ def handle_pkt(pkt):
     if TCP in pkt and pkt[TCP].dport == 1234 and Klass in pkt:
         timestamp=time.time_ns()
         latency = (timestamp - pkt.start) / 1e6
-        result_dict.append([pkt.start, time_stamp, latency, pkt.truth, pkt.result])
+        result_dict.append([pkt.start, timestamp, latency, pkt.truth, pkt.result])
 
         if len(result_dict) == records:
             with open("result.csv","w") as result:
