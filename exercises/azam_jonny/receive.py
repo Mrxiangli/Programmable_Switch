@@ -6,7 +6,6 @@ import csv
 import signal
 
 count = 0
-records = 50960
 result_dict= []
 
 from scapy.all import (
@@ -90,7 +89,7 @@ def handler(signum, frame):
 def handle_pkt(pkt):
     global count
     global result_dict
-    global records
+
     if TCP in pkt and pkt[TCP].dport == 9999:
         count +=1
         signal.alarm(2)
