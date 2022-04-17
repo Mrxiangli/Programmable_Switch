@@ -2,8 +2,12 @@
 import os
 import sys
 import time
+import csv
 
 count = 0
+
+result_dic= [dict()]*50961
+
 from scapy.all import (
     Packet,
     IntField,
@@ -66,14 +70,19 @@ class IPOption_MRI(IPOption):
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
     global count
+    global result_dic
     if TCP in pkt and pkt[TCP].dport == 1234:
-    #if TCP in pkt:
-        #pkt.show2()
         sys.stdout.flush()
-        print(round(time.time()*1000) - pkt.start)
-        if pkt.result == pkt.truth:
-            count += 1
-            print(f"Az is a real big phony:{count}")
+        latency = round(time.time()*1000) - pkt.start
+        result_dict[count]["time"] = latency
+        result_dict[count]["truth"] = pkt.truth
+        result_dict[count]["result"] = pkt.result
+        count += 1
+    if count == 10:
+         with open("result.csv","w") as result:
+            writer = csv.writer(result)
+            for i in range(count):
+                writer.writerow(result[i])
 
 
 def main():

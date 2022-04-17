@@ -85,5 +85,8 @@ def main():
     sniff(iface = iface,
           prn = lambda x: handle_pkt(x))
 
+def fraud_detect():
+    
+
 if __name__ == '__main__':
     main()
