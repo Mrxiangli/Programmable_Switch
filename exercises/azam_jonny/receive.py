@@ -5,7 +5,7 @@ import time
 import csv
 
 count = 0
-
+records = 50960
 result_dict= []
 
 from scapy.all import (
@@ -80,14 +80,15 @@ class IPOption_MRI(IPOption):
 def handle_pkt(pkt):
     global count
     global result_dict
+    global records
     if TCP in pkt and pkt[TCP].dport == 1234:
         sys.stdout.flush()
         latency = round(time.time()*1000) - pkt.start
         result_dict.append([latency, pkt.truth, pkt.result])    
-    if len(result_dict) == 50960:
+    if len(result_dict) == records:
         with open("result.csv","w") as result:
             writer = csv.writer(result)
-            for i in range(10):
+            for i in range(records):
                 writer.writerow(result_dict[i])
         print("finish writing")
 
