@@ -79,8 +79,8 @@ class IPOption_MRI(IPOption):
                                    IntField("", 0),
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
-    if TCP in pkt and pkt[TCP].dport == 1234:
-        pkt = decision_tree(pkt)
+    if TCP in pkt and pkt[TCP].dport == 1234 and Klass in pkt:
+        pkt[Klass] = decision_tree(pkt[Klass])
 
         tmp = pkt[IP].dst
         pkt[IP].dst = pkt[IP].src
