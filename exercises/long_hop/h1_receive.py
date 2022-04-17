@@ -84,7 +84,7 @@ def handle_pkt(pkt):
     global records
     if TCP in pkt and pkt[TCP].dport == 1234 and Klass in pkt:
         timestamp=time.time_ns()
-        latency = timestamp - pkt.start
+        latency = (timestamp - pkt.start) / 1e6
         result_dict.append([pkt.start, time_stamp, latency, pkt.truth, pkt.result])
 
         if len(result_dict) == records:
