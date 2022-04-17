@@ -87,12 +87,12 @@ def handle_pkt(pkt):
         result_dict[count]["truth"] = pkt.truth
         result_dict[count]["result"] = pkt.result
         count += 1
-    if count == 10:
+    if count == 50961:
          with open("result.csv","w") as result:
             writer = csv.writer(result)
             for i in range(count):
                 writer.writerow(result_dict[i].values())
-
+        print("finish writing")
 
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
