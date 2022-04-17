@@ -41,17 +41,17 @@ class Klass(Packet):
 def expand(x):
     yield x
 
-# open the file in the write mode
-with open('path/to/csv_file', 'w') as f:
-    # create the csv writer
-    writer = csv.writer(f)
+    # open the file in the write mode
+    with open('path/to/csv_file', 'w') as f:
+        # create the csv writer
+        writer = csv.writer(f)
 
-    # write a row to the csv file
-    writer.writerow(row)
+        # write a row to the csv file
+        writer.writerow(row)
 
-    while x.payload:
-        x = x.payload
-        yield x
+        while x.payload:
+            x = x.payload
+            yield x
 
 def get_if():
     ifs=get_if_list()
