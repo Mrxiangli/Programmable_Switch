@@ -39,7 +39,7 @@ class Klass(Packet):
         BitField("truth",0, 8)]
 
 def expand(x):
-    yield ximport csv
+    yield x
 
 # open the file in the write mode
 with open('path/to/csv_file', 'w') as f:
