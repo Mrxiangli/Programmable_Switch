@@ -91,7 +91,7 @@ def handle_pkt(pkt):
          with open("result.csv","w") as result:
             writer = csv.writer(result)
             for i in range(count):
-                writer.writerow(result_dict[i])
+                writer.writerow(result_dict[i].values())
 
 
 def main():
