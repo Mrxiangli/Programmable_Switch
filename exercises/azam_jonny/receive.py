@@ -85,7 +85,6 @@ def handle_pkt(pkt):
         latency = round(time.time()*1000) - pkt.start
         result_dict.append([latency, pkt.truth, pkt.result])    
     if len(result_dict) == 50960:
-        print(result_dict)
         with open("result.csv","w") as result:
             writer = csv.writer(result)
             for i in range(10):
