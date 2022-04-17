@@ -189,16 +189,22 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
+    // action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+    //     bit<48> tmp;
+
+    //     /* Swap the MAC addresses */
+    //     tmp = hdr.ethernet.dstAddr;
+    //     hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
+    //     hdr.ethernet.srcAddr = tmp;
+
+    //     /* Send the packet back to the port it came from */
+    //     standard_metadata.egress_spec = standard_metadata.ingress_port;
+    // }
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-        bit<48> tmp;
-
-        /* Swap the MAC addresses */
-        tmp = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
-        hdr.ethernet.srcAddr = tmp;
-
-        /* Send the packet back to the port it came from */
-        standard_metadata.egress_spec = standard_metadata.ingress_port;
+        standard_metadata.egress_spec = port;
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
     // action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
@@ -231,153 +237,153 @@ control MyIngress(inout headers hdr,
         default_action = NoAction();
     }
 
-    apply {
-        if (hdr.tcp.isValid()) {
-            // Hash 4 tuple for register-array index
-            hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
+     apply {
+ //        if (hdr.tcp.isValid()) {
+ //            // Hash 4 tuple for register-array index
+ //            hash_packet(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
 
-	bit<32> x10 = hdr.class.X10;
-    bit<32> x11 = hdr.class.X11;
-    bit<32> x14 = hdr.class.X14;
-    bit<32> x17 = hdr.class.X17;
-    bit<32> x27 = hdr.class.X27;
-    bit<8> result;
-    bit<32> tmp;
+	// bit<32> x10 = hdr.class.X10;
+ //    bit<32> x11 = hdr.class.X11;
+ //    bit<32> x14 = hdr.class.X14;
+ //    bit<32> x17 = hdr.class.X17;
+ //    bit<32> x27 = hdr.class.X27;
+ //    bit<8> result;
+ //    bit<32> tmp;
 
-    if((x17 & NEGATIVE_MASK) > 0){ // x17 is neagtive
-        tmp = ~(x17 - 1);
-        if (tmp > 2789){       //True 
+ //    if((x17 & NEGATIVE_MASK) > 0){ // x17 is neagtive
+ //        tmp = ~(x17 - 1);
+ //        if (tmp > 2789){       //True 
 
-            if((x10 & NEGATIVE_MASK) > 0){ // x10 is neagtive
-                tmp = ~(x10 - 1);
-                if (tmp > 1378){       //True 
+ //            if((x10 & NEGATIVE_MASK) > 0){ // x10 is neagtive
+ //                tmp = ~(x10 - 1);
+ //                if (tmp > 1378){       //True 
 
-                    if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                        tmp = ~(x14 - 1);
-                        if (tmp > 3441){       //True
-                            result = 1;
-                        }else{              //False
-                            result = 0;
-                        } 
-                    }else{              //x14 positive
-                            result = 0;
-                    } 
-                }else{              //negative false x10
-                    if((x11 & NEGATIVE_MASK) > 0){  //
-                        tmp = ~(x11 - 1);
-                        if (tmp > 3325){
-                            result = 0;
-                        }else{
-                            result = 1;
-                        }
-                    }else{          // x12 positive
-                        result = 1;
-                    }
-                } 
-            }
-            else{   //x10 is positive
-                if((x11 & NEGATIVE_MASK) > 0){  //
-                    tmp = ~(x11 - 1);
-                    if (tmp > 3325){
-                        result = 0;
-                    }else{
-                        result = 1;
-                    }
-                }else{          // x12 positive
-                    result = 1;
-                }
-            }   
-        }else{              //False x17
-            if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                tmp = ~(x14 - 1);
-                if (tmp > 8225){       //True
+ //                    if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //                        tmp = ~(x14 - 1);
+ //                        if (tmp > 3441){       //True
+ //                            result = 1;
+ //                        }else{              //False
+ //                            result = 0;
+ //                        } 
+ //                    }else{              //x14 positive
+ //                            result = 0;
+ //                    } 
+ //                }else{              //negative false x10
+ //                    if((x11 & NEGATIVE_MASK) > 0){  //
+ //                        tmp = ~(x11 - 1);
+ //                        if (tmp > 3325){
+ //                            result = 0;
+ //                        }else{
+ //                            result = 1;
+ //                        }
+ //                    }else{          // x12 positive
+ //                        result = 1;
+ //                    }
+ //                } 
+ //            }
+ //            else{   //x10 is positive
+ //                if((x11 & NEGATIVE_MASK) > 0){  //
+ //                    tmp = ~(x11 - 1);
+ //                    if (tmp > 3325){
+ //                        result = 0;
+ //                    }else{
+ //                        result = 1;
+ //                    }
+ //                }else{          // x12 positive
+ //                    result = 1;
+ //                }
+ //            }   
+ //        }else{              //False x17
+ //            if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //                tmp = ~(x14 - 1);
+ //                if (tmp > 8225){       //True
 
-                    if((x27 & NEGATIVE_MASK) > 0){ // x12 is neagtive
-                        tmp = ~(x27 - 1);
-                        if (tmp > 463){       //True
-                            result = 0;
-                        }else{              //False
-                            result = 1;
-                        } 
-                    }else{              //x12 positive
-                        result = 1;
-                    }  
-                }else{              //False
-                    if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                        tmp = ~(x14 - 1);
-                        if (tmp > 4661){       //True
-                            result = 0;
-                        }else{              //False
-                            result = 0;
-                        } 
-                    }else{              //x14 positive
-                        result = 0;
-                    } 
+ //                    if((x27 & NEGATIVE_MASK) > 0){ // x12 is neagtive
+ //                        tmp = ~(x27 - 1);
+ //                        if (tmp > 463){       //True
+ //                            result = 0;
+ //                        }else{              //False
+ //                            result = 1;
+ //                        } 
+ //                    }else{              //x12 positive
+ //                        result = 1;
+ //                    }  
+ //                }else{              //False
+ //                    if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //                        tmp = ~(x14 - 1);
+ //                        if (tmp > 4661){       //True
+ //                            result = 0;
+ //                        }else{              //False
+ //                            result = 0;
+ //                        } 
+ //                    }else{              //x14 positive
+ //                        result = 0;
+ //                    } 
                     
-                } 
-            }else{              //x14 positive
-                if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                    tmp = ~(x14 - 1);
-                    if (tmp > 4661){       //True
-                        result = 0;
-                    }else{              //False
-                        result = 0;
-                    } 
-                }else{              //x14 positive
-                    result = 0;
-                }  
-            } 
-        } 
-    }else{  //x17 positive
-        if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-            tmp = ~(x14 - 1);
-            if (tmp > 8225){       //True
+ //                } 
+ //            }else{              //x14 positive
+ //                if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //                    tmp = ~(x14 - 1);
+ //                    if (tmp > 4661){       //True
+ //                        result = 0;
+ //                    }else{              //False
+ //                        result = 0;
+ //                    } 
+ //                }else{              //x14 positive
+ //                    result = 0;
+ //                }  
+ //            } 
+ //        } 
+ //    }else{  //x17 positive
+ //        if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //            tmp = ~(x14 - 1);
+ //            if (tmp > 8225){       //True
 
-                if((x27 & NEGATIVE_MASK) > 0){ // x12 is neagtive
-                    tmp = ~(x27 - 1);
-                    if (tmp > 463){       //True
-                        result = 0;
-                    }else{              //False
-                        result = 1;
-                    } 
-                }else{              //x12 positive
-                    result = 1;
-                }  
-            }else{              //False
-                if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                    tmp = ~(x14 - 1);
-                    if (tmp > 4661){       //True
-                        result = 0;
-                    }else{              //False
-                        result = 0;
-                    } 
-                }else{              //x14 positive
-                    result = 0;
-                } 
+ //                if((x27 & NEGATIVE_MASK) > 0){ // x12 is neagtive
+ //                    tmp = ~(x27 - 1);
+ //                    if (tmp > 463){       //True
+ //                        result = 0;
+ //                    }else{              //False
+ //                        result = 1;
+ //                    } 
+ //                }else{              //x12 positive
+ //                    result = 1;
+ //                }  
+ //            }else{              //False
+ //                if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //                    tmp = ~(x14 - 1);
+ //                    if (tmp > 4661){       //True
+ //                        result = 0;
+ //                    }else{              //False
+ //                        result = 0;
+ //                    } 
+ //                }else{              //x14 positive
+ //                    result = 0;
+ //                } 
                 
-            } 
-        }else{              //x14 positive
-            if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
-                tmp = ~(x14 - 1);
-                if (tmp > 4661 ){       //True
-                    result = 0;
-                }else{              //False
-                    result = 0;
-                } 
-            }else{              //x14 positive
-                result = 0;
-            }  
-        } 
-    } 
+ //            } 
+ //        }else{              //x14 positive
+ //            if((x14 & NEGATIVE_MASK) > 0){ // x14 is neagtive
+ //                tmp = ~(x14 - 1);
+ //                if (tmp > 4661 ){       //True
+ //                    result = 0;
+ //                }else{              //False
+ //                    result = 0;
+ //                } 
+ //            }else{              //x14 positive
+ //                result = 0;
+ //            }  
+ //        } 
+ //    } 
 
-	hdr.class.result = result;
+	// hdr.class.result = result;
 	    	
-    hdr.class.hash = hash_value;
-        }
+ //    hdr.class.hash = hash_value;
+ //        }
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
         }
-    }
+     }
 }
 
 /*************************************************************************
