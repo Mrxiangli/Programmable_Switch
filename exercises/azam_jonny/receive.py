@@ -80,6 +80,11 @@ class IPOption_MRI(IPOption):
                                    length_from=lambda pkt:pkt.count*4) ]
 def handler(signum, frame):
     print('Signal handler called with signal', signum)
+    with open("result.csv","w") as result:
+        writer = csv.writer(result)
+        for i in range(records):
+            writer.writerow(result_dict[i])
+        print("finish writing")
     sys.exit()
 
 def handle_pkt(pkt):
@@ -91,12 +96,6 @@ def handle_pkt(pkt):
         sys.stdout.flush()
         latency = (time.time_ns() - pkt.start) / 1e6
         result_dict.append([latency, pkt.truth, pkt.result])    
-    if len(result_dict) == records:
-        with open("result.csv","w") as result:
-            writer = csv.writer(result)
-            for i in range(records):
-                writer.writerow(result_dict[i])
-        print("finish writing")
 
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
