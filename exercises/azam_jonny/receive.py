@@ -82,7 +82,7 @@ def handler(signum, frame):
     print('Signal handler called with signal', signum)
     with open("result.csv","w") as result:
         writer = csv.writer(result)
-        for i in range(records):
+        for i in range(count):
             writer.writerow(result_dict[i])
         print("finish writing")
     sys.exit()
@@ -92,6 +92,7 @@ def handle_pkt(pkt):
     global result_dict
     global records
     if TCP in pkt and pkt[TCP].dport == 9999:
+        count +=1
         signal.alarm(2)
         sys.stdout.flush()
         latency = (time.time_ns() - pkt.start) / 1e6
