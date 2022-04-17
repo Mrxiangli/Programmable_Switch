@@ -88,7 +88,7 @@ def handle_pkt(pkt):
         result_dict[count]["result"] = pkt.result
         count += 1
     if count == 50961:
-         with open("result.csv","w") as result:
+        with open("result.csv","w") as result:
             writer = csv.writer(result)
             for i in range(count):
                 writer.writerow(result_dict[i].values())
