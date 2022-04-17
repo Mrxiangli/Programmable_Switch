@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import csv
+import signal
 
 count = 0
 records = 50960
@@ -78,26 +79,31 @@ class IPOption_MRI(IPOption):
                                    [],
                                    IntField("", 0),
                                    length_from=lambda pkt:pkt.count*4) ]
+def handler(signum, frame):
+    print('Signal handler called with signal', signum)
+    with open("result.csv","w") as result:
+        writer = csv.writer(result)
+        for i in range(count):
+            writer.writerow(result_dict[i])
+        print("finish writing")
+    sys.exit()
+
 def handle_pkt(pkt):
     global count
     global result_dict
-    global records
-    if TCP in pkt and pkt[TCP].dport == 9999 and Klass in pkt:
-        timestamp=time.time_ns()
-        latency = (timestamp - pkt.start) / 1e6
-        result_dict.append([pkt.start, timestamp, latency, pkt.truth, pkt.result])
 
-        if len(result_dict) == records:
-            with open("result.csv","w") as result:
-                writer = csv.writer(result)
-                for i in range(records):
-                    writer.writerow(result_dict[i])
-            print("finish writing")
+    if TCP in pkt and pkt[TCP].dport == 9999:
+        count +=1
+        signal.alarm(2)
+        sys.stdout.flush()
+        latency = (time.time_ns() - pkt.start) / 1e6
+        result_dict.append([latency, pkt.truth, pkt.result])    
 
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
     iface = ifaces[0]
     bind_layers(TCP, Klass, dport=9999)
+    signal.signal(signal.SIGALRM, handler)
     print("sniffing on %s" % iface)
     sys.stdout.flush()
     sniff(iface = iface,
