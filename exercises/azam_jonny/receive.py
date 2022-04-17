@@ -6,7 +6,7 @@ import csv
 
 count = 0
 
-result_dic= [dict()]*50961
+result_dict= [dict()]*50961
 
 from scapy.all import (
     Packet,
@@ -39,7 +39,16 @@ class Klass(Packet):
         BitField("truth",0, 8)]
 
 def expand(x):
-    yield x
+    yield ximport csv
+
+# open the file in the write mode
+with open('path/to/csv_file', 'w') as f:
+    # create the csv writer
+    writer = csv.writer(f)
+
+    # write a row to the csv file
+    writer.writerow(row)
+
     while x.payload:
         x = x.payload
         yield x
@@ -82,7 +91,7 @@ def handle_pkt(pkt):
          with open("result.csv","w") as result:
             writer = csv.writer(result)
             for i in range(count):
-                writer.writerow(result[i])
+                writer.writerow(result_dict[i])
 
 
 def main():
