@@ -12,6 +12,7 @@ from scapy.all import (
     Packet,
     IntField,
     BitField,
+    IP,
     TCP,
     FieldLenField,
     FieldListField,
@@ -80,10 +81,10 @@ class IPOption_MRI(IPOption):
 def handle_pkt(pkt):
     if TCP in pkt and pkt[TCP].dport == 1234:
         pkt = decision_tree(pkt)
-        
-        tmp = pkt[TCP].dst
-        pkt[TCP].dst = pkt[TCP].src
-        pkt[TCP].src = tmp
+
+        tmp = pkt[IP].dst
+        pkt[IP].dst = pkt[IP].src
+        pkt[IP].src = tmp
         sendp(pkt)
 
 def decision_tree(pkt):
@@ -110,7 +111,7 @@ def decision_tree(pkt):
             else:
                 result = 1
         else:
-            if x14 <= -4661
+            if x14 <= -4661:
                 result = 0
             else:
                 result = 0

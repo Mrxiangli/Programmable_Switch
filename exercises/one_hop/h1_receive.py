@@ -86,7 +86,7 @@ def handle_pkt(pkt):
         sys.stdout.flush()
         latency = round(time.time()*1000) - pkt.start
         result_dict.append([latency, pkt.truth, pkt.result])    
-    if len(result_dict) == records
+    if len(result_dict) == records:
         with open("result.csv","w") as result:
             writer = csv.writer(result)
             for i in range(records):
