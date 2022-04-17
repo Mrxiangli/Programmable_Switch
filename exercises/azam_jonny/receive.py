@@ -79,12 +79,12 @@ class IPOption_MRI(IPOption):
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
     global count
-    global result_dic
+    global result_dict
     if TCP in pkt and pkt[TCP].dport == 1234:
         sys.stdout.flush()
         latency = round(time.time()*1000) - pkt.start
         result_dict.append([latency, pkt.truth, pkt.result])    
-    if len(resul_dict) == 10:
+    if len(result_dict) == 50960:
         print(result_dict)
         with open("result.csv","w") as result:
             writer = csv.writer(result)
