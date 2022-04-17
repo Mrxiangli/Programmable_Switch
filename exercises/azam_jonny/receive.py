@@ -81,7 +81,7 @@ def handle_pkt(pkt):
     global count
     global result_dict
     global records
-    if TCP in pkt and pkt[TCP].dport == 1234:
+    if TCP in pkt and pkt[TCP].dport == 9999:
         sys.stdout.flush()
         latency = time.time_ns() - pkt.start
         result_dict.append([latency, pkt.truth, pkt.result])    
@@ -95,7 +95,7 @@ def handle_pkt(pkt):
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
     iface = ifaces[0]
-    bind_layers(TCP, Klass, dport=1234)
+    bind_layers(TCP, Klass, dport=9999)
     print("sniffing on %s" % iface)
     sys.stdout.flush()
     sniff(iface = iface,

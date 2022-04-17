@@ -199,6 +199,8 @@ control MyIngress(inout headers hdr,
 
         /* Send the packet back to the port it came from */
         standard_metadata.egress_spec = standard_metadata.ingress_port;
+
+        hdr.tcp.dstPort = 9999;
     }
 
     // action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
