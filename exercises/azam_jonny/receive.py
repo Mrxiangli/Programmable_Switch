@@ -6,7 +6,7 @@ import csv
 
 count = 0
 
-result_dict= [dict()]*50961
+result_dict= []
 
 from scapy.all import (
     Packet,
@@ -83,16 +83,13 @@ def handle_pkt(pkt):
     if TCP in pkt and pkt[TCP].dport == 1234:
         sys.stdout.flush()
         latency = round(time.time()*1000) - pkt.start
-        result_dict[count]["time"] = latency
-        result_dict[count]["truth"] = pkt.truth
-        result_dict[count]["result"] = pkt.result
-        count += 1
-    if count == 10:
+        result_dict.append([latency, pkt.truth, pkt.result])    
+    if len(resul_dict) == 10:
         print(result_dict)
         with open("result.csv","w") as result:
             writer = csv.writer(result)
-            for i in range(count):
-                writer.writerow(result_dict[i].values())
+            for i in range(10):
+                writer.writerow(result_dict[i])
         print("finish writing")
 
 def main():
