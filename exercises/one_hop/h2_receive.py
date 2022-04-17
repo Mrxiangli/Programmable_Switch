@@ -85,7 +85,7 @@ def handle_pkt(pkt):
         tmp = pkt[IP].dst
         pkt[IP].dst = pkt[IP].src
         pkt[IP].src = tmp
-        sendp(pkt)
+        sendp(pkt, verbose=False)
 
 def decision_tree(pkt):
     x10 = pkt.X10
