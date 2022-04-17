@@ -82,16 +82,15 @@ def handle_pkt(pkt):
     global count
     global result_dict
     global records
-    if TCP in pkt and pkt[TCP].dport == 1234:
-        sys.stdout.flush()
+    if TCP in pkt and pkt[TCP].dport == 1234 and Klass in pkt:
         latency = round(time.time()*1000) - pkt.start
-        result_dict.append([latency, pkt.truth, pkt.result])    
-    if len(result_dict) == records:
-        with open("result.csv","w") as result:
-            writer = csv.writer(result)
-            for i in range(records):
-                writer.writerow(result_dict[i])
-        print("finish writing")
+        result_dict.append([latency, pkt.truth, pkt.result, pkt.asdf])  
+        if len(result_dict) == records:
+            with open("result.csv","w") as result:
+                writer = csv.writer(result)
+                for i in range(records):
+                    writer.writerow(result_dict[i])
+            print("finish writing")
 
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
