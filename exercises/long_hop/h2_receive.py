@@ -6,12 +6,13 @@ import csv
 
 count = 0
 
-result_dict= [dict()]*50961
+result_dict= []
 
 from scapy.all import (
     Packet,
     IntField,
     BitField,
+    IP,
     TCP,
     FieldLenField,
     FieldListField,
@@ -78,21 +79,44 @@ class IPOption_MRI(IPOption):
                                    IntField("", 0),
                                    length_from=lambda pkt:pkt.count*4) ]
 def handle_pkt(pkt):
-    global count
-    global result_dic
     if TCP in pkt and pkt[TCP].dport == 1234:
-        sys.stdout.flush()
-        latency = round(time.time()*1000) - pkt.start
-        result_dict[count]["time"] = latency
-        result_dict[count]["truth"] = pkt.truth
-        result_dict[count]["result"] = pkt.result
-        count += 1
-    if count == 50961:
-        with open("result.csv","w") as result:
-            writer = csv.writer(result)
-            for i in range(count):
-                writer.writerow(result_dict[i].values())
-        print("finish writing")
+        pkt = decision_tree(pkt)
+
+        tmp = pkt[IP].dst
+        pkt[IP].dst = pkt[IP].src
+        pkt[IP].src = tmp
+        sendp(pkt, verbose=False)
+
+def decision_tree(pkt):
+    x10 = pkt.X10
+    x11 = pkt.X11
+    x14 = pkt.X14
+    x17 = pkt.X17
+    x27 = pkt.X27
+    if x17 <= -2789:
+        if x10 <= -1378:
+            if x14 <= -3441:
+                result = 1
+            else:
+                result = 0
+        else:
+            if x11 <= 3325:
+                result = 0
+            else:
+                result = 1
+    else:
+        if x14 <= -8225:
+            if x27 <= -463:
+                result = 0
+            else:
+                result = 1
+        else:
+            if x14 <= -4661:
+                result = 0
+            else:
+                result = 0
+    pkt.result = result            
+    return pkt
 
 def main():
     ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]
