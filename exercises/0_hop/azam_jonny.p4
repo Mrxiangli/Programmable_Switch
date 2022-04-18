@@ -210,9 +210,9 @@ control MyIngress(inout headers hdr,
         hdr.ethernet.dstAddr = dstAddr;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
 
-        // if (hdr.tcp.isValid()) {
-        //     hdr.tcp.dstPort = 9999;
-        // }
+        if (hdr.tcp.isValid()) {
+            hdr.tcp.dstPort = 9999;
+        }
     }
 
     table ipv4_lpm {
