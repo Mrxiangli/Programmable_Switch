@@ -7,6 +7,7 @@ from scapy.all import IntField, BitField, IP, TCP, Ether, get_if_hwaddr, get_if_
 import csv
 import time
 import sys
+
 class Klass(Packet):
     name = "Klass"
     fields_desc=[
@@ -52,16 +53,11 @@ def main():
     print("sending on interface %s to %s" % (iface, str(addr)))
 
     p_pkt = lambda p: print(p)
-    count = 0
     with open("testing-data.csv","r") as test:
         csv_reader = csv.reader(test)
         for row in csv_reader:
-            count +=1
-            #time.sleep(0.01)
             pkt =  Ether(src=get_if_hwaddr(iface), dst='00:00:00:00:00:00')
             pkt = pkt / IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / Klass(hash=0, X10=int(row[10]),X11=int(row[11]),X14=int(row[14]),X17=int(row[17]),X27=int(row[27]), start=time.time_ns(), truth=int(int(row[-1])/1000))
             sendp(pkt, iface=iface, verbose=False)
-            if count == 100:
-                break
 if __name__ == '__main__':
     main()
