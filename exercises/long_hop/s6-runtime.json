@@ -17,11 +17,11 @@
     {
       "table": "MyIngress.ipv4_lpm",
       "match": {
-        "hdr.ipv4.dstAddr": ["10.0.3.3", 32]
+        "hdr.ipv4.dstAddr": ["10.0.6.6", 32]
       },
       "action_name": "MyIngress.ipv4_forward",
       "action_params": {
-        "dstAddr": "08:00:00:00:03:03",
+        "dstAddr": "08:00:00:00:06:06",
         "port": 2
       }
     }
