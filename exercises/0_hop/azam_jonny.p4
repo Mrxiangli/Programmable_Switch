@@ -366,15 +366,14 @@ control MyIngress(inout headers hdr,
                 result = 0;
             }  
         } 
-    } 
 
-	hdr.class.result = result;
-	    	
-    hdr.class.hash = hash_value;
-        }
-        if (hdr.ipv4.isValid()) {
-            ipv4_lpm.apply();
-        }
+        hdr.class.result = result;        
+        hdr.class.hash = hash_value;
+    } 
+    }
+    if (hdr.ipv4.isValid()) {
+        ipv4_lpm.apply();
+    }
     }
 }
 
