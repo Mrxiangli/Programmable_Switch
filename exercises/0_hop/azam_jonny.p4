@@ -95,13 +95,13 @@ parser MyParser(packet_in packet,
 
     state start {
         transition parse_ethernet;
-        default: accept;
     }
 
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
             TYPE_IPV4: parse_ipv4;
+            default: accept;
         }
     }
 
@@ -190,25 +190,27 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action send_back() {
-        bit<48> tmp;
+    // action send_back() {
+    //     bit<48> tmp;
 
-        /* Swap the MAC addresses */
-        tmp = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
-        hdr.ethernet.srcAddr = tmp;
+    //     /* Swap the MAC addresses */
+    //     tmp = hdr.ethernet.dstAddr;
+    //     hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
+    //     hdr.ethernet.srcAddr = tmp;
 
-        /* Send the packet back to the port it came from */
-        standard_metadata.egress_spec = standard_metadata.ingress_port;
+    //     /* Send the packet back to the port it came from */
+    //     standard_metadata.egress_spec = standard_metadata.ingress_port;
 
-        hdr.tcp.dstPort = 9999;
-    }
+    //     hdr.tcp.dstPort = 9999;
+    // }
 
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+
+        hdr.tcp.dstPort = 9999;
     }
 
     table ipv4_lpm {
@@ -216,13 +218,13 @@ control MyIngress(inout headers hdr,
             hdr.ipv4.dstAddr: lpm;
         }
         actions = {
-            send_back;
+            // send_back;
             ipv4_forward;
             drop;
             NoAction;
         }
         size = 1024;
-        default_action = ipv4_forward();
+        default_action = NoAction();
     }
 
     apply {
