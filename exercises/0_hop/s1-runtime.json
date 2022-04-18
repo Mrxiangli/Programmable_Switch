@@ -24,6 +24,22 @@
         "dstAddr": "08:00:00:00:01:02",
         "port": 2
       }
+    },
+    {
+      "table": "MyIngress.send_back",
+      "match": {
+        "hdr.ipv4.dstAddr": ["10.0.1.1", 32]
+      },
+      "action_name": "MyIngress.ipv4_forward",
+      "action_params": { }
+    },
+    {
+      "table": "MyIngress.send_back",
+      "match": {
+        "hdr.ipv4.dstAddr": ["10.0.1.2", 32]
+      },
+      "action_name": "MyIngress.ipv4_forward",
+      "action_params": { }
     }
   ]
 }
